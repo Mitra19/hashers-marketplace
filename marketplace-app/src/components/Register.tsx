@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { IUserModel, addUser, isUsernameExists } from "../../../../react-auth-local-storage/src/LocalStorage";
+import { IUserModel, addUser, isUsernameExists } from "./../LocalStorage";
 
 const Register = () => {
   const [data, setData] = useState<IUserModel>({

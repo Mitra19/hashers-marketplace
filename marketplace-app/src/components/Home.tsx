@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IUserModel, getActiveUser, removeActiveUser } from "../../../../react-auth-local-storage/src/LocalStorage";
+import { IUserModel, getActiveUser, removeActiveUser } from "./../LocalStorage";
 import { useNavigate } from "react-router";
 import Dashboard from "./Dashboard";
 import Navbar from "./Navbar";

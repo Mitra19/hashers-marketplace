@@ -71,8 +71,8 @@ const updateActiveUser = (user: IUserModel) => {
 const getActiveUser = () => {
   var usersStr = localStorage.getItem(ACTIVE_USER) || null;
   if (usersStr == null) return null;
-
-  var user = JSON.parse(usersStr) as IUserModel;
+console.log("ACtive user:" ,usersStr)
+  var user = JSON.parse(usersStr);
   return user;
 };
 const getItems = () => {

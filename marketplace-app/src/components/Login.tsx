@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getUser, updateActiveUser } from "../../../../react-auth-local-storage/src/LocalStorage";
+import { getUser, updateActiveUser } from "./../LocalStorage";
 
 interface ILoginModel {
   username: string;

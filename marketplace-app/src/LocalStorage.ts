@@ -86,6 +86,15 @@ const getItems = () => {
 const removeActiveUser = () => {
   localStorage.removeItem(ACTIVE_USER);
 };
+const removeItem = (itemName: string) => {
+  let itemsStr = localStorage.getItem(ITEMS) || "[]";
+  let items = JSON.parse(itemsStr) as ItemsToSell[];
+
+  // Filter out the item to be deleted based on the itemName
+  items = items.filter(item => item.itemName !== itemName);
+
+  localStorage.setItem(ITEMS, JSON.stringify(items));
+};
 
 export {
   REGISTERED_USERS_KEY,
@@ -97,5 +106,6 @@ export {
   removeActiveUser,
   addItem,
   updateItemRating,
-  getItems
+  getItems,
+  removeItem
 };

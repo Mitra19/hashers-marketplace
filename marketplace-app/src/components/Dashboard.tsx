@@ -1,21 +1,31 @@
 // Dashboard.tsx
 import { useState, useEffect } from "react";
-import { getItems } from "./../LocalStorage"; // adjust the import path as needed
+import { getItems, removeItem, getActiveUser } from "./../LocalStorage"; // Import getActiveUser
 import AddItemForm from "./AddItemForm"; // Import the AddItemForm component
 
 export default function Dashboard() {
   const [items, setItems] = useState<any[] | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [activeUser, setActiveUser] = useState<any | null>(null);
 
-  // Fetch items from localStorage on component mount
+  // Fetch items from localStorage and active user on component mount
   useEffect(() => {
     const fetchedItems = getItems();
     setItems(fetchedItems);
+
+    const fetchedActiveUser = getActiveUser();
+    setActiveUser(fetchedActiveUser);
   }, []);
 
-  // Refresh the items list after adding an item
+  // Refresh the items list after adding or removing an item
   const handleItemAdded = () => {
     setItems(getItems());
+  };
+
+  // Refresh the items list after an item is deleted
+  const handleItemRemoved = (itemName: string) => {
+    removeItem(itemName);
+    setItems(getItems()); // Refresh the items list
   };
 
   // Close the form without adding an item
@@ -51,12 +61,34 @@ export default function Dashboard() {
             <h2>Items List</h2>
             <ul>
               {items.map((item, index) => (
-                <li key={index}>
+                <li key={index} style={{ marginBottom: "15px" }}>
                   <strong>{item.itemName}</strong> - INR {item.itemPrice}
                   <br />
                   {item.itemDescription}
                   <br />
-                  <img src={item.itemImage} alt={item.itemName} style={{ width: "100px" }} />
+                  Seller - {item.owner}
+                  <br />
+                  <img
+                    src={item.itemImage}
+                    alt={item.itemName}
+                    style={{ width: "100px", marginTop: "10px" }}
+                  />
+                  <br />
+                  <button
+                    onClick={() => handleItemRemoved(item.itemName)}
+                    disabled={!activeUser || item.owner !== activeUser.username}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "#FF6347",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: activeUser && item.owner === activeUser.username ? "pointer" : "not-allowed",
+                      marginTop: "10px",
+                    }}
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
             </ul>

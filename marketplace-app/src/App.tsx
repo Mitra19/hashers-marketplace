@@ -1,69 +1,36 @@
-import {type FC, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Register from './components/Register';
-import Login from './components/Login';
-import Welcome from './components/Welcome';
+import "./App.css";
+import Home from "./Components/Home";
+import Login from "./Components/Login";
+import Register from "./Components/Register";
+// import Dashboard from "./Components/Dashboard";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
+import { getActiveUser } from "./LocalStorage";
 
-interface User {
-  id: string;
-  username: string;
-  password: string;
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/" element={<PrivateRoute />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-const App: FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const handleRegister = (username: string, password: string) => {
-    if (users.find((user) => user.username === username)) {
-      alert('User already exists!');
-      return;
-    }
-    const newUser = { id: Date.now().toString(), username, password };
-    setUsers([...users, newUser]);
-    alert('Registration successful!');
-    
-  };
-
-  const handleLogin = (username: string, password: string) => {
-    console.log("Exsisting users: ", users);
-    const user = users.find(
-      (user) => user.username === username && user.password === password
-    );
-    if (user) {
-      setCurrentUser(user);
-      alert('Login successful!');
-    } else {
-      alert('Invalid username or password!');
-    }
-  };
-
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            currentUser ? <Navigate to="/welcome" /> : <Navigate to="/login" />
-          }
-        />
-        <Route
-          path="/register"
-          element={<Register onRegister={handleRegister} />}
-        />
-        <Route
-          path="/login"
-          element={<Login onLogin={handleLogin} />}
-        />
-        <Route
-          path="/welcome"
-          element={
-            currentUser ? <Welcome username={currentUser.username} /> : <Navigate to="/login" />
-          }
-        />
-      </Routes>
-    </Router>
-  );
+const PrivateRoute = () => {
+  var activeUser = getActiveUser();
+  if (activeUser == null) return <Navigate to="/login" />;
+  return <Outlet />;
 };
 
 export default App;

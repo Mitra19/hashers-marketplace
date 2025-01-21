@@ -46,10 +46,6 @@ const Register = () => {
 
   return (
     <>
-      <div className="background">
-        <div className="shape"></div>
-        <div className="shape"></div>
-      </div>
       <form onSubmit={handleFormSubmit}>
         <h3>Register Here</h3>
 

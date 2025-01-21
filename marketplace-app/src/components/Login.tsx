@@ -37,10 +37,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="background">
-        <div className="shape"></div>
-        <div className="shape"></div>
-      </div>
+   
       <form onSubmit={handleFormSubmit}>
         <h3>Login Here</h3>
 

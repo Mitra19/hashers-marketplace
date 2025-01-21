@@ -4,8 +4,8 @@ import AddItemForm from "./AddItemForm";
 import Navbar from "./Navbar"; 
 import { useNavigate } from "react-router";
 export default function Dashboard() {
-  const [items, setItems] = useState<any[] | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [items, setItems] = useState<any[] | null>(null); // State to keep items with respect to owner
+  const [showForm, setShowForm] = useState(false); //State that takes care of showing the form
   const [activeUser, setActiveUser] = useState<any | null>(null); // State to keep active user in check
   const [sortOrder, setSortOrder] = useState<string>("default"); // State for sorting order
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
@@ -23,14 +23,20 @@ export default function Dashboard() {
   const handleItemAdded = () => {
     setItems(getItems());
   };
+  //To help in navigation to different routes
   const navigate = useNavigate();
+
+  // Handle logout (it will first remove active user from local storage,
+  // give logout alert and the route
+  // to login page)
   const handleLogout = () => {
     removeActiveUser();
     alert("Logged out!");
     navigate("/login");
   };
 
-
+// This fuction is triggered when delete button is clicked
+// It removes the item from the list and updates the state
   const handleItemRemoved = (itemName: string) => {
     removeItem(itemName);
     setItems(getItems());
@@ -39,12 +45,13 @@ export default function Dashboard() {
   const closeForm = () => {
     setShowForm(false);
   };
-
+// This function is triggered when rate button is clicked
+// an alert pops for inputting rating out of 5
   const handleRateItem = (itemName: string) => {
     const rating = prompt(`Rate ${itemName} out of 5:`);
     if (rating) {
       alert(`You rated ${itemName} with ${rating} stars!`);
-      updateItemRating(itemName, parseInt(rating));
+      updateItemRating(itemName, parseInt(rating)); // updates rating in local storage
     }
   };
 

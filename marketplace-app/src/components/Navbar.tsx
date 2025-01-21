@@ -3,9 +3,10 @@ import { FC } from "react";
 interface NavbarProps {
   username: string;
   onLogout: () => void;
+  onSearch: (query: string) => void;
 }
 
-const Navbar: FC<NavbarProps> = ({ username, onLogout }) => {
+const Navbar: FC<NavbarProps> = ({ username, onLogout, onSearch }) => {
   return (
     <div
       style={{
@@ -15,8 +16,8 @@ const Navbar: FC<NavbarProps> = ({ username, onLogout }) => {
         right: 0,
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center", // Ensures vertical alignment in the center
-        padding: "10px 20px",
+        alignItems: "center", 
+        padding: "10px 10px",
         backgroundColor: "#282c34",
         color: "white",
         zIndex: 1000,
@@ -29,6 +30,7 @@ const Navbar: FC<NavbarProps> = ({ username, onLogout }) => {
         <input
           type="text"
           placeholder="Search..."
+          onChange={(e) => onSearch(e.target.value)}
           style={{
             padding: "5px 10px",
             borderRadius: "4px",
@@ -39,8 +41,8 @@ const Navbar: FC<NavbarProps> = ({ username, onLogout }) => {
       <div
         style={{
           display: "flex",
-          alignItems: "center", // This ensures both the username and button are aligned on the same line
-          gap: "10px", // Spacing between username and button
+          alignItems: "center", 
+          gap: "10px", 
         }}
       >
         <span>{username}</span>

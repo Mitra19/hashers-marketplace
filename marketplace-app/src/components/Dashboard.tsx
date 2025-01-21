@@ -72,7 +72,11 @@ export default function Dashboard() {
       return [...currentItems].sort((a, b) => b.rating - a.rating);
     } else if (sortOrder === "rating-lowToHigh") {
       return [...currentItems].sort((a, b) => a.rating - b.rating);
-    }
+    }else if (sortOrder === "aToZ") {
+    return [...currentItems].sort((a, b) => a.itemName.localeCompare(b.itemName));
+  } else if (sortOrder === "zToA") {
+    return [...currentItems].sort((a, b) => b.itemName.localeCompare(a.itemName));
+  }
     return currentItems;
   };
 
@@ -163,6 +167,9 @@ export default function Dashboard() {
             <option value="highToLow">Price: High to Low</option>
             <option value="rating-highToLow">Rating: High to Low</option>
             <option value="rating-lowToHigh">Rating: Low to High</option>
+            <option value="aToZ">Name: A to Z</option>
+            <option value="zToA">Name: Z to A</option>
+            
           </select>
         </div>
 

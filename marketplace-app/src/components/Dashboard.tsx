@@ -1,12 +1,12 @@
-// Dashboard.tsx
 import { useState, useEffect } from "react";
-import { getItems, getActiveUser, removeItem ,updateItemRating} from "./../LocalStorage"; // Import necessary functions
+import { getItems, getActiveUser, removeItem, updateItemRating } from "./../LocalStorage"; // Import necessary functions
 import AddItemForm from "./AddItemForm"; // Import the AddItemForm component
 
 export default function Dashboard() {
   const [items, setItems] = useState<any[] | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [activeUser, setActiveUser] = useState<any | null>(null);
+  const [sortOrder, setSortOrder] = useState<string>("default"); // State for sorting order
 
   // Fetch active user and items from localStorage on component mount
   useEffect(() => {
@@ -37,6 +37,24 @@ export default function Dashboard() {
       alert(`You rated ${itemName} with ${rating} stars!`);
       updateItemRating(itemName, parseInt(rating));
     }
+  };
+
+  // Sort items based on the selected order
+  const sortedItems = () => {
+    if (!items) return null;
+
+    if (sortOrder === "lowToHigh") {
+      return [...items].sort((a, b) => a.itemPrice - b.itemPrice);
+    } else if (sortOrder === "highToLow") {
+      return [...items].sort((a, b) => b.itemPrice - a.itemPrice);
+    }
+    else if (sortOrder === "rating-highToLow") {
+        return [...items].sort((a, b) => b.rating - a.rating);
+    }
+    else if (sortOrder === "rating-lowToHigh") {
+        return [...items].sort((a, b) => a.rating - b.rating);
+    }
+    return items;
   };
 
   return (
@@ -87,6 +105,35 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Filter Dropdown */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "800px",
+          marginBottom: "20px",
+        }}
+      >
+        <label htmlFor="priceFilter" style={{ marginRight: "10px" }}>
+          Sort by Price:
+        </label>
+        <select
+          id="priceFilter"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          style={{
+            padding: "5px 10px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+          }}
+        >
+          <option value="default">Default</option>
+          <option value="lowToHigh">Low to High</option>
+          <option value="highToLow">High to Low</option>
+          <option value="rating-highToLow">Rating (High To Low)</option>
+          <option value="rating-lowToHigh">Rating (Low To High)</option>
+        </select>
+      </div>
+
       <div
         style={{
           width: "100%",
@@ -106,7 +153,7 @@ export default function Dashboard() {
                 justifyContent: "space-between",
               }}
             >
-              {items.map((item, index) => (
+              {sortedItems()!.map((item, index) => (
                 <li
                   key={index}
                   style={{

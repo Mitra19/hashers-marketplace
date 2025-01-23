@@ -1,0 +1,92 @@
+/* AddItemForm Styles */
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  input,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    font-size: 1rem;
+  }
+  
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"] {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  button[type="button"] {
+    background-color: #ff6347;
+    color: #ffffff;
+  }
+  
+  button[type="button"]:hover {
+    background-color: #e5533f;
+  }
+  
+  /* Add responsive layout */
+  @media (max-width: 600px) {
+    form {
+      padding: 15px;
+    }
+  
+    button {
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    button[type="button"] {
+      margin-left: 0;
+    }
+  }
+  

@@ -1,61 +1,48 @@
 import { useState, useEffect } from "react";
-import { getItems, getActiveUser, removeItem, updateItemRating, removeActiveUser } from "./../LocalStorage"; // Import necessary functions
-import AddItemForm from "./AddItemForm"; 
-import Navbar from "./Navbar"; 
+import { getItems, getActiveUser, removeItem, updateItemRating, removeActiveUser } from "./../LocalStorage";
+import AddItemForm from "./AddItemForm";
+import Navbar from "./Navbar";
 import { useNavigate } from "react-router";
-export default function Dashboard() {
-  const [items, setItems] = useState<any[] | null>(null); // State to keep items with respect to owner
-  const [showForm, setShowForm] = useState(false); //State that takes care of showing the form
-  const [activeUser, setActiveUser] = useState<any | null>(null); // State to keep active user in check
-  const [sortOrder, setSortOrder] = useState<string>("default"); // State for sorting order
-  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
 
-  // Fetch active user and items from localStorage on component mount
+export default function Dashboard() {
+  const [items, setItems] = useState<any[] | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [activeUser, setActiveUser] = useState<any | null>(null);
+  const [sortOrder, setSortOrder] = useState<string>("default");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchedActiveUser = getActiveUser();
     setActiveUser(fetchedActiveUser);
-
-    const fetchedItems = getItems();
-    setItems(fetchedItems);
+    setItems(getItems());
   }, []);
 
-  // Refresh the items list after adding or removing an item
-  const handleItemAdded = () => {
-    setItems(getItems());
-  };
-  //To help in navigation to different routes
-  const navigate = useNavigate();
-
-  // Handle logout (it will first remove active user from local storage,
-  // give logout alert and the route
-  // to login page)
   const handleLogout = () => {
     removeActiveUser();
     alert("Logged out!");
     navigate("/login");
   };
 
-// This fuction is triggered when delete button is clicked
-// It removes the item from the list and updates the state
+  const handleItemAdded = () => {
+    setItems(getItems());
+  };
+
   const handleItemRemoved = (itemName: string) => {
     removeItem(itemName);
     setItems(getItems());
   };
 
-  const closeForm = () => {
-    setShowForm(false);
-  };
-// This function is triggered when rate button is clicked
-// an alert pops for inputting rating out of 5
   const handleRateItem = (itemName: string) => {
     const rating = prompt(`Rate ${itemName} out of 5:`);
     if (rating) {
       alert(`You rated ${itemName} with ${rating} stars!`);
-      updateItemRating(itemName, parseInt(rating)); // updates rating in local storage
+      updateItemRating(itemName, parseInt(rating));
+      setItems(getItems());
     }
   };
 
-  // Filter items based on search query
   const filteredItems = () => {
     if (!items) return null;
 
@@ -65,109 +52,59 @@ export default function Dashboard() {
     );
   };
 
-  // Sort items based on the selected order
   const sortedItems = () => {
     const currentItems = filteredItems();
-
     if (!currentItems) return null;
 
-    if (sortOrder === "lowToHigh") {
-      return [...currentItems].sort((a, b) => a.itemPrice - b.itemPrice);
-    } else if (sortOrder === "highToLow") {
-      return [...currentItems].sort((a, b) => b.itemPrice - a.itemPrice);
-    } else if (sortOrder === "rating-highToLow") {
-      return [...currentItems].sort((a, b) => b.rating - a.rating);
-    } else if (sortOrder === "rating-lowToHigh") {
-      return [...currentItems].sort((a, b) => a.rating - b.rating);
-    }else if (sortOrder === "aToZ") {
-    return [...currentItems].sort((a, b) => a.itemName.localeCompare(b.itemName));
-  } else if (sortOrder === "zToA") {
-    return [...currentItems].sort((a, b) => b.itemName.localeCompare(a.itemName));
-  }
-    return currentItems;
+    switch (sortOrder) {
+      case "lowToHigh":
+        return [...currentItems].sort((a, b) => a.itemPrice - b.itemPrice);
+      case "highToLow":
+        return [...currentItems].sort((a, b) => b.itemPrice - a.itemPrice);
+      case "rating-highToLow":
+        return [...currentItems].sort((a, b) => b.rating - a.rating);
+      case "rating-lowToHigh":
+        return [...currentItems].sort((a, b) => a.rating - b.rating);
+      case "aToZ":
+        return [...currentItems].sort((a, b) => a.itemName.localeCompare(b.itemName));
+      case "zToA":
+        return [...currentItems].sort((a, b) => b.itemName.localeCompare(a.itemName));
+      default:
+        return currentItems;
+    }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh", 
-        backgroundColor: "#000",
-        color: "#fff", 
-        paddingTop: "60px", 
-        boxSizing: "border-box",
-      }}
-    >
+    <div className="dashboard">
       <Navbar
         username={activeUser?.username || "Guest"}
-        onLogout={() => handleLogout()} 
+        onLogout={handleLogout}
         onSearch={(query) => setSearchQuery(query)}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px",
-          maxWidth: "100%",
-        }}
-      >
-        <h1 style={{ textAlign: "center" }}>Dashboard</h1>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            maxWidth: "800px",
-            marginBottom: "20px",
-          }}
-        >
+      <div className="dashboard-container">
+<br></br>
+        <h1 className="dashboard-title"></h1>
+        <div className="dashboard-header">
           {activeUser ? (
-            <button
-              onClick={() => setShowForm(true)}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
               Add Item
             </button>
           ) : (
-            <p>Please log in to add items.</p>
+            <p className="login-message">Please log in to add items.</p>
           )}
         </div>
 
         {showForm && (
-          <div style={{ marginBottom: "20px", width: "100%" }}>
-            <AddItemForm onItemAdded={handleItemAdded} closeForm={closeForm} />
-          </div>
+          <AddItemForm onItemAdded={handleItemAdded} closeForm={() => setShowForm(false)} />
         )}
 
-        {/* Filter Dropdown */}
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "800px",
-            marginBottom: "20px",
-          }}
-        >
-          <label htmlFor="priceFilter" style={{ marginRight: "10px" }}>
-            Sort by:
-          </label>
+        <div className="dashboard-filters">
+          <label htmlFor="sortOrder">Sort by:</label>
           <select
-            id="priceFilter"
+            id="sortOrder"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            style={{
-              padding: "5px 10px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
           >
             <option value="default">Default</option>
             <option value="lowToHigh">Price: Low to High</option>
@@ -176,116 +113,48 @@ export default function Dashboard() {
             <option value="rating-lowToHigh">Rating: Low to High</option>
             <option value="aToZ">Name: A to Z</option>
             <option value="zToA">Name: Z to A</option>
-            
           </select>
         </div>
 
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            maxWidth: "800px",
-          }}
-        >
-          {items && items.length > 0 ? (
-            <div>
-              <h2 style={{ textAlign: "center" }}>Items List</h2>
-              <ul
-                style={{
-                  listStyleType: "none",
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent:
-                    items.length === 1 ? "center" : "space-between", 
-                  gap: "10px", 
-                }}
-              >
-                {sortedItems()!.map((item, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      border: "1px solid #ddd",
-                      borderRadius: "8px",
-                      padding: "15px",
-                      width: "calc(50% - 20px)",
-                      maxWidth: "400px",
-                      boxSizing: "border-box",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      textAlign: "center",
-                      minHeight: "300px",
-                      maxHeight: "400px",
-                      overflow: "hidden",
-                      backgroundColor: "#333", 
-                      color: "#fff", 
-                    }}
+        <ul className="item-list">
+          {sortedItems()?.map((item, index) => (
+            <li className="item-card" key={index}>
+              <img
+                className="item-image"
+                src={item.itemImage}
+                alt={item.itemName}
+              />
+              <div className="item-details">
+                <h3 className="item-name">{item.itemName}</h3>
+                <p className="item-price">₹{item.itemPrice}</p>
+                <p className="item-description">{item.itemDescription}</p>
+                <p className="item-owner">Seller: {item.owner}</p>
+                <p className="item-rating">Rating: {item.rating}/5</p>
+              </div>
+              <div className="item-actions">
+                {activeUser && item.owner === activeUser.username ? (
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleItemRemoved(item.itemName)}
                   >
-                    <strong>{item.itemName}</strong> - INR {item.itemPrice}
-                    <p
-                      style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "normal",
-                        wordWrap: "break-word",
-                        margin: "10px 0",
-                      }}
-                    >
-                      {item.itemDescription}
-                    </p>
-                    <p>Seller - {item.owner}</p>
-                    <p>Rating - {item.rating}/5</p>
-                    <img
-                      src={item.itemImage}
-                      alt={item.itemName}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        objectFit: "cover",
-                        marginTop: "10px",
-                      }}
-                    />
-                    {activeUser && item.owner === activeUser.username ? (
-                      <button
-                        onClick={() => handleItemRemoved(item.itemName)}
-                        style={{
-                          padding: "5px 10px",
-                          backgroundColor: "#FF6347",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Delete
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleRateItem(item.itemName)}
-                        style={{
-                          padding: "5px 10px",
-                          backgroundColor: "#FFD700",
-                          color: "black",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Rate
-                      </button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p style={{ textAlign: "center" }}>No items found</p>
-          )}
-        </div>
+                    Delete
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleRateItem(item.itemName)}
+                  >
+                    Rate
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {items && items.length === 0 && (
+          <p className="empty-state">No items available.</p>
+        )}
       </div>
     </div>
   );
